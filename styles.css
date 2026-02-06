@@ -353,6 +353,19 @@ button:disabled {
   color: var(--text);
 }
 
+.ai-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  animation: shimmer 1.2s linear infinite;
+}
+
 .more summary::-webkit-details-marker {
   display: none;
 }
@@ -422,6 +435,11 @@ button:disabled {
 @keyframes shufflePulse {
   from { transform: translate(0, 0) rotate(-1deg); }
   to { transform: translate(2px, -2px) rotate(1deg); }
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
 }
 
 
