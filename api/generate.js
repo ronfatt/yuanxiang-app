@@ -42,30 +42,27 @@ module.exports = async function handler(req, res) {
       text: {
         format: {
           type: "json_schema",
-          json_schema: {
-            name: "card_readings",
-            strict: true,
-            schema: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                cards: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    properties: {
-                      index: { type: "number" },
-                      short: { type: "string" },
-                      medium: { type: "string" },
-                      long: { type: "string" }
-                    },
-                    required: ["index", "short", "medium", "long"]
-                  }
+          name: "card_readings",
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              cards: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    index: { type: "number" },
+                    short: { type: "string" },
+                    medium: { type: "string" },
+                    long: { type: "string" }
+                  },
+                  required: ["index", "short", "medium", "long"]
                 }
-              },
-              required: ["cards"]
-            }
+              }
+            },
+            required: ["cards"]
           }
         }
       }
