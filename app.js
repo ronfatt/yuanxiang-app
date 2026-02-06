@@ -462,20 +462,29 @@ function renderLayer() {
         <details class="more">
           <summary>展开解读</summary>
           <div class="section">
-            <div class="section-title">当前定位</div>
+            <div class="section-title big">当前定位</div>
             <div class="section-body">
               <div class="pos">${info.positions[idx]}</div>
-              <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
-              <div class="kv"><div class="k">关联</div><div class="v">${ctx}</div></div>
-              <div class="kv"><div class="k">频率</div><div class="v">${interp.frequency.replace("频率：", "")}</div></div>
-              <div class="kv"><div class="k">指令</div><div class="v">${buildDirectiveLine(card).replace("指令：", "")}</div></div>
+              <div class="name authority">${meta.symbol} ${card.rank} · ${card.deity}</div>
+              <div class="authority-sub">${card.deity.includes("（") ? "" : ""}</div>
             </div>
           </div>
 
-          <div class="section ai-block" data-index="${start + idx}">
-            <div class="section-title">AI 解读（短 / 中 / 深）</div>
+          <div class="section card-talk" data-index="${start + idx}">
+            <div class="section-title">这一张牌，在对你说什么</div>
             <div class="section-body">
-              <div class="ai-text">点击展开后生成</div>
+              <div class="tri-line">
+                <div class="tri-tag past">你已经知道的</div>
+                <div class="tri-text ai-line" data-field="known">点击展开后生成</div>
+              </div>
+              <div class="tri-line">
+                <div class="tri-tag now">你正在经历的</div>
+                <div class="tri-text ai-line" data-field="present">点击展开后生成</div>
+              </div>
+              <div class="tri-line">
+                <div class="tri-tag core">你必须面对的</div>
+                <div class="tri-text ai-line" data-field="must">点击展开后生成</div>
+              </div>
             </div>
           </div>
 
@@ -483,9 +492,7 @@ function renderLayer() {
             <div class="section-title">系统深层</div>
             <div class="section-body">
               <div class="meta">${meta.cn}｜${card.stage}</div>
-              <div class="summary">${buildSummary(card)}</div>
-              <div class="summary">${interp.energy}</div>
-              <div class="summary">${interp.destiny}</div>
+              <div class="summary">如需深层解读，请联系元象导师。</div>
             </div>
           </div>
         </details>
@@ -579,7 +586,7 @@ async function requestAIReadings(question) {
   aiRequestInFlight = true;
   aiRequested = true;
   try {
-    document.querySelectorAll(".ai-text").forEach((el) => {
+    document.querySelectorAll(".ai-line").forEach((el) => {
       el.textContent = "生成中...";
       el.classList.add("ai-loading");
     });
@@ -608,7 +615,7 @@ async function requestAIReadings(question) {
     hydrateAIBlocks();
     renderAISummary();
   } catch (e) {
-    document.querySelectorAll(".ai-text").forEach((el) => {
+    document.querySelectorAll(".ai-line").forEach((el) => {
       el.textContent = "AI 生成失败，可稍后再试。";
       el.classList.remove("ai-loading");
     });
@@ -621,17 +628,25 @@ async function requestAIReadings(question) {
 }
 
 function hydrateAIBlocks() {
-  document.querySelectorAll(".ai-block").forEach((block) => {
+  document.querySelectorAll(".card-talk").forEach((block) => {
     const idx = Number(block.getAttribute("data-index"));
     const item = aiReadings.find((r) => r.index === idx);
-    const textEl = block.querySelector(".ai-text");
-    if (!item || !textEl) return;
-    textEl.classList.remove("ai-loading");
-    textEl.innerHTML = `
-      <div><strong>短：</strong>${item.short}</div>
-      <div><strong>中：</strong>${item.medium}</div>
-      <div><strong>深：</strong>${item.long}</div>
-    `;
+    if (!item) return;
+    const known = block.querySelector('[data-field="known"]');
+    const present = block.querySelector('[data-field="present"]');
+    const must = block.querySelector('[data-field="must"]');
+    if (known) {
+      known.classList.remove("ai-loading");
+      known.textContent = item.known;
+    }
+    if (present) {
+      present.classList.remove("ai-loading");
+      present.textContent = item.present;
+    }
+    if (must) {
+      must.classList.remove("ai-loading");
+      must.textContent = item.must;
+    }
   });
 }
 
