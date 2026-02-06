@@ -470,6 +470,13 @@ function renderLayer() {
             </div>
           </div>
 
+          <div class="section reason" data-index="${start + idx}">
+            <div class="section-title">为什么会出现这张牌 · 这个神明？</div>
+            <div class="section-body">
+              <div class="ai-line" data-field="reason">点击展开后生成</div>
+            </div>
+          </div>
+
           <div class="section card-talk" data-index="${start + idx}">
             <div class="section-title">这一张牌，在对你说什么</div>
             <div class="section-body">
@@ -646,6 +653,17 @@ function hydrateAIBlocks() {
     if (must) {
       must.classList.remove("ai-loading");
       must.textContent = item.must;
+    }
+  });
+
+  document.querySelectorAll(".reason").forEach((block) => {
+    const idx = Number(block.getAttribute("data-index"));
+    const item = aiReadings.find((r) => r.index === idx);
+    if (!item) return;
+    const reason = block.querySelector('[data-field="reason"]');
+    if (reason) {
+      reason.classList.remove("ai-loading");
+      reason.textContent = item.reason;
     }
   });
 }
