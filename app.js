@@ -299,6 +299,8 @@ const layerError = document.getElementById("layer-error");
 const nineGrid = document.getElementById("nine-grid");
 const finalDirective = document.getElementById("final-directive");
 const nineSummary = document.getElementById("nine-summary");
+const homeBtn = document.getElementById("home-btn");
+const sampleBtns = document.querySelectorAll(".sample-btn");
 
 const yesNoPatterns = ["吗", "是不是", "是否", "要不要", "会不会", "能不能", "可不可以", "行不行", "好不好", "对不对"];
 const predictPatterns = ["会成功", "会失败", "会不会成功", "未来", "结果", "结局", "能不能成"];
@@ -691,6 +693,24 @@ function renderAISummary() {
   `;
 }
 
+function resetToHome() {
+  questionEl.value = "";
+  questionError.textContent = "";
+  updateShuffle(0);
+  drawn = [];
+  currentLayer = 0;
+  currentTopics = [];
+  currentCrossTriggered = false;
+  aiReadings = [];
+  aiRequested = false;
+  aiSummary = null;
+  stepLayer.classList.add("hidden");
+  stepGrid.classList.add("hidden");
+  stepShuffle.classList.add("hidden");
+  stepQuestion.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 validateBtn.addEventListener("click", () => {
   const err = isValidQuestion(questionEl.value);
   questionError.textContent = err;
@@ -698,6 +718,13 @@ validateBtn.addEventListener("click", () => {
   currentTopics = detectTopics(questionEl.value);
   stepQuestion.classList.add("hidden");
   stepShuffle.classList.remove("hidden");
+});
+
+sampleBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    questionEl.value = btn.textContent.trim();
+    questionEl.focus();
+  });
 });
 
 shuffleReset.addEventListener("click", () => {
@@ -716,6 +743,10 @@ shuffleDone.addEventListener("click", () => {
   stepShuffle.classList.add("hidden");
   stepLayer.classList.remove("hidden");
   renderLayer();
+});
+
+homeBtn.addEventListener("click", () => {
+  resetToHome();
 });
 
 let lastMove = 0;
