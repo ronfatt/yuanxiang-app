@@ -362,6 +362,11 @@ button:disabled {
   color: var(--accent);
 }
 
+.section-title.big {
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
 .section-body {
   display: grid;
   row-gap: 6px;
@@ -383,6 +388,38 @@ button:disabled {
 .kv .v {
   font-size: 13px;
   line-height: 1.5;
+}
+
+.authority {
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+.card-talk .section-body {
+  row-gap: 10px;
+}
+
+.tri-line {
+  display: grid;
+  row-gap: 4px;
+}
+
+.tri-tag {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tri-text {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tri-tag.past { color: #d7c08a; }
+.tri-tag.now { color: #f0b07a; }
+.tri-tag.core { color: #e28c8c; }
+
+.summary-panel {
+  margin-top: 12px;
 }
 
 .ai-loading {
