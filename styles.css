@@ -105,16 +105,13 @@ h2 {
   letter-spacing: 1px;
 }
 
-.sample-btn {
+.sample-line {
   text-align: left;
   border-radius: 10px;
   padding: 10px 12px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
-}
-
-.sample-btn:hover {
-  border-color: rgba(210,177,106,0.45);
+  color: var(--text);
 }
 
 textarea {
