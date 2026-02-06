@@ -1,8 +1,0 @@
-{
-  "name": "yuanxiang-divination",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "openai": "^4.79.0"
-  }
-}
