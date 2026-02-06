@@ -7,12 +7,15 @@ function buildPrompt({ question, cards }) {
     "你是“元像·52神明占卜”的仪式解读者。",
     "目标：生成更人性化、贴合用户问题的解读，但不做预测，只给行动指引。",
     "输出要求：",
-    "1) 每张牌输出三句话，严格对应：你已经知道的 / 你正在经历的 / 你必须面对的。",
+    "1) 每张牌输出四段：",
+    "  A) 为什么会出现这张牌·这个神明（必须包含 频率/状态/共振 等词汇，禁止出现“随机/抽到了/因为你抽到”）",
+    "  B) 你已经知道的",
+    "  C) 你正在经历的（必须出现“正在”）",
+    "  D) 你必须面对的（必须包含“如果你继续……”并给出明确行动指令：断 / 看 / 做 / 稳）",
     "2) 必须结合用户问题与该牌的维度/阶段/指令。",
-    "3) “你必须面对的”必须包含“如果你继续……”并给出明确行动指令（用：断 / 看 / 做 / 稳）。",
-    "4) 额外输出九宫总解读三档：短 / 中 / 深。",
-    "5) 语气稳、清醒、直接，不鸡汤。",
-    "6) 不出现“保证/一定/必然/预言”。",
+    "3) 额外输出九宫总解读三档：短 / 中 / 深。",
+    "4) 语气稳、清醒、直接，不鸡汤。",
+    "5) 不出现“保证/一定/必然/预言”。",
     "",
     `用户问题：${question}`,
     "",
@@ -56,11 +59,12 @@ module.exports = async function handler(req, res) {
                   additionalProperties: false,
                   properties: {
                     index: { type: "number" },
+                    reason: { type: "string" },
                     known: { type: "string" },
                     present: { type: "string" },
                     must: { type: "string" }
                   },
-                  required: ["index", "known", "present", "must"]
+                  required: ["index", "reason", "known", "present", "must"]
                 }
               },
               summary: {
