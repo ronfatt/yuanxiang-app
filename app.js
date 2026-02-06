@@ -300,7 +300,6 @@ const nineGrid = document.getElementById("nine-grid");
 const finalDirective = document.getElementById("final-directive");
 const nineSummary = document.getElementById("nine-summary");
 const homeBtn = document.getElementById("home-btn");
-const sampleBtns = document.querySelectorAll(".sample-btn");
 
 const yesNoPatterns = ["吗", "是不是", "是否", "要不要", "会不会", "能不能", "可不可以", "行不行", "好不好", "对不对"];
 const predictPatterns = ["会成功", "会失败", "会不会成功", "未来", "结果", "结局", "能不能成"];
@@ -720,12 +719,6 @@ validateBtn.addEventListener("click", () => {
   stepShuffle.classList.remove("hidden");
 });
 
-sampleBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    questionEl.value = btn.textContent.trim();
-    questionEl.focus();
-  });
-});
 
 shuffleReset.addEventListener("click", () => {
   updateShuffle(0);
