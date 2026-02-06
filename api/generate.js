@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
     }
 
     const response = await client.responses.create({
-      model: "gpt-5",
+      model: "gpt-4o-mini",
       input: buildPrompt({ question, cards }),
       response_format: {
         type: "json_schema",
@@ -73,6 +73,12 @@ module.exports = async function handler(req, res) {
     const data = JSON.parse(text);
     res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ error: "OpenAI request failed" });
+    console.error("OpenAI error:", err);
+    const message =
+      err?.error?.message ||
+      err?.response?.data?.error?.message ||
+      err?.message ||
+      "OpenAI request failed";
+    res.status(500).json({ error: message });
   }
 };
