@@ -414,6 +414,11 @@ button:disabled {
   line-height: 1.6;
 }
 
+.reason .section-body .ai-line {
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 .tri-tag.past { color: #d7c08a; }
 .tri-tag.now { color: #f0b07a; }
 .tri-tag.core { color: #e28c8c; }
