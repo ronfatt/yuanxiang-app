@@ -39,31 +39,33 @@ module.exports = async function handler(req, res) {
     const response = await client.responses.create({
       model: "gpt-4o-mini",
       input: buildPrompt({ question, cards }),
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "card_readings",
-          strict: true,
-          schema: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              cards: {
-                type: "array",
-                items: {
-                  type: "object",
-                  additionalProperties: false,
-                  properties: {
-                    index: { type: "number" },
-                    short: { type: "string" },
-                    medium: { type: "string" },
-                    long: { type: "string" }
-                  },
-                  required: ["index", "short", "medium", "long"]
+      text: {
+        format: {
+          type: "json_schema",
+          json_schema: {
+            name: "card_readings",
+            strict: true,
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                cards: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      index: { type: "number" },
+                      short: { type: "string" },
+                      medium: { type: "string" },
+                      long: { type: "string" }
+                    },
+                    required: ["index", "short", "medium", "long"]
+                  }
                 }
-              }
-            },
-            required: ["cards"]
+              },
+              required: ["cards"]
+            }
           }
         }
       }
