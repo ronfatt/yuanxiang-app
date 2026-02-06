@@ -276,6 +276,7 @@ let currentTopics = [];
 let currentCrossTriggered = false;
 let aiReadings = [];
 let aiRequestInFlight = false;
+let aiRequested = false;
 
 const questionEl = document.getElementById("question");
 const questionError = document.getElementById("question-error");
@@ -465,7 +466,7 @@ function renderLayer() {
           <div class="summary">${buildDirectiveLine(card)}</div>
           <div class="ai-block" data-index="${start + idx}">
             <div class="ai-title">AI 解读（短 / 中 / 深）</div>
-            <div class="ai-text">生成中...</div>
+            <div class="ai-text">点击展开后生成</div>
           </div>
           <div class="meta">${meta.cn}｜${card.stage}</div>
           <div class="summary">${buildSummary(card)}</div>
@@ -478,6 +479,7 @@ function renderLayer() {
   });
 
   attachFlipHandlers(layerCards);
+  attachDetailsHandlers(layerCards);
 
   if (currentLayer === 0) {
     layerNext.textContent = "继续深入";
@@ -520,7 +522,7 @@ function renderGrid() {
           <div class="summary">${buildDirectiveLine(card)}</div>
           <div class="ai-block" data-index="${idx}">
             <div class="ai-title">AI 解读（短 / 中 / 深）</div>
-            <div class="ai-text">生成中...</div>
+            <div class="ai-text">点击展开后生成</div>
           </div>
           <div class="meta">${meta.cn}｜${card.stage}</div>
           <div class="summary">${buildSummary(card)}</div>
@@ -533,6 +535,7 @@ function renderGrid() {
   });
 
   attachFlipHandlers(nineGrid);
+  attachDetailsHandlers(nineGrid);
 
   const last = drawn[8];
   const directive = directiveCn[last.directive];
@@ -548,6 +551,18 @@ function attachFlipHandlers(container) {
   });
 }
 
+function attachDetailsHandlers(container) {
+  const details = container.querySelectorAll("details.more");
+  details.forEach((d) => {
+    d.addEventListener("toggle", () => {
+      if (d.open && !aiRequested) {
+        aiRequested = true;
+        requestAIReadings(questionEl.value);
+      }
+    });
+  });
+}
+
 function getPositionLabel(index) {
   const layer = Math.floor(index / 3);
   const pos = index % 3;
@@ -558,6 +573,10 @@ async function requestAIReadings(question) {
   if (aiRequestInFlight) return;
   aiRequestInFlight = true;
   try {
+    document.querySelectorAll(".ai-text").forEach((el) => {
+      el.textContent = "生成中...";
+      el.classList.add("ai-loading");
+    });
     const payload = {
       question,
       cards: drawn.map((card, index) => ({
@@ -583,6 +602,7 @@ async function requestAIReadings(question) {
   } catch (e) {
     document.querySelectorAll(".ai-text").forEach((el) => {
       el.textContent = "AI 生成失败，可稍后再试。";
+      el.classList.remove("ai-loading");
     });
   } finally {
     aiRequestInFlight = false;
@@ -595,6 +615,7 @@ function hydrateAIBlocks() {
     const item = aiReadings.find((r) => r.index === idx);
     const textEl = block.querySelector(".ai-text");
     if (!item || !textEl) return;
+    textEl.classList.remove("ai-loading");
     textEl.innerHTML = `
       <div><strong>短：</strong>${item.short}</div>
       <div><strong>中：</strong>${item.medium}</div>
@@ -622,11 +643,11 @@ shuffleDone.addEventListener("click", () => {
   drawn = deckShuffled.slice(0, 9);
   currentLayer = 0;
   aiReadings = [];
+  aiRequested = false;
   shuffleArea.classList.remove("active");
   stepShuffle.classList.add("hidden");
   stepLayer.classList.remove("hidden");
   renderLayer();
-  requestAIReadings(questionEl.value);
 });
 
 let lastMove = 0;
