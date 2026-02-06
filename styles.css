@@ -314,6 +314,12 @@ button:disabled {
   padding-top: 6px;
 }
 
+.card-body.mini {
+  margin-top: 18px;
+  padding-top: 0;
+  gap: 4px;
+}
+
 .more {
   margin-top: 4px;
   border-top: 1px dashed rgba(255,255,255,0.08);
