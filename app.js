@@ -459,19 +459,33 @@ function renderLayer() {
       <div class="card-body">
         <details class="more">
           <summary>展开解读</summary>
-          <div class="pos">${info.positions[idx]}</div>
-          <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
-          <div class="summary">${ctx}</div>
-          <div class="summary">${interp.frequency}</div>
-          <div class="summary">${buildDirectiveLine(card)}</div>
-          <div class="ai-block" data-index="${start + idx}">
-            <div class="ai-title">AI 解读（短 / 中 / 深）</div>
-            <div class="ai-text">点击展开后生成</div>
+          <div class="section">
+            <div class="section-title">当前定位</div>
+            <div class="section-body">
+              <div class="pos">${info.positions[idx]}</div>
+              <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
+              <div class="kv"><div class="k">关联</div><div class="v">${ctx}</div></div>
+              <div class="kv"><div class="k">频率</div><div class="v">${interp.frequency.replace("频率：", "")}</div></div>
+              <div class="kv"><div class="k">指令</div><div class="v">${buildDirectiveLine(card).replace("指令：", "")}</div></div>
+            </div>
           </div>
-          <div class="meta">${meta.cn}｜${card.stage}</div>
-          <div class="summary">${buildSummary(card)}</div>
-          <div class="summary">${interp.energy}</div>
-          <div class="summary">${interp.destiny}</div>
+
+          <div class="section ai-block" data-index="${start + idx}">
+            <div class="section-title">AI 解读（短 / 中 / 深）</div>
+            <div class="section-body">
+              <div class="ai-text">点击展开后生成</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">系统深层</div>
+            <div class="section-body">
+              <div class="meta">${meta.cn}｜${card.stage}</div>
+              <div class="summary">${buildSummary(card)}</div>
+              <div class="summary">${interp.energy}</div>
+              <div class="summary">${interp.destiny}</div>
+            </div>
+          </div>
         </details>
       </div>
     `;
@@ -515,19 +529,33 @@ function renderGrid() {
       <div class="card-body">
         <details class="more">
           <summary>展开解读</summary>
-          <div class="pos">${Math.floor(idx / 3) + 1}-${(idx % 3) + 1}</div>
-          <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
-          <div class="summary">${ctx}</div>
-          <div class="summary">${interp.frequency}</div>
-          <div class="summary">${buildDirectiveLine(card)}</div>
-          <div class="ai-block" data-index="${idx}">
-            <div class="ai-title">AI 解读（短 / 中 / 深）</div>
-            <div class="ai-text">点击展开后生成</div>
+          <div class="section">
+            <div class="section-title">当前定位</div>
+            <div class="section-body">
+              <div class="pos">${Math.floor(idx / 3) + 1}-${(idx % 3) + 1}</div>
+              <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
+              <div class="kv"><div class="k">关联</div><div class="v">${ctx}</div></div>
+              <div class="kv"><div class="k">频率</div><div class="v">${interp.frequency.replace("频率：", "")}</div></div>
+              <div class="kv"><div class="k">指令</div><div class="v">${buildDirectiveLine(card).replace("指令：", "")}</div></div>
+            </div>
           </div>
-          <div class="meta">${meta.cn}｜${card.stage}</div>
-          <div class="summary">${buildSummary(card)}</div>
-          <div class="summary">${interp.energy}</div>
-          <div class="summary">${interp.destiny}</div>
+
+          <div class="section ai-block" data-index="${idx}">
+            <div class="section-title">AI 解读（短 / 中 / 深）</div>
+            <div class="section-body">
+              <div class="ai-text">点击展开后生成</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">系统深层</div>
+            <div class="section-body">
+              <div class="meta">${meta.cn}｜${card.stage}</div>
+              <div class="summary">${buildSummary(card)}</div>
+              <div class="summary">${interp.energy}</div>
+              <div class="summary">${interp.destiny}</div>
+            </div>
+          </div>
         </details>
       </div>
     `;
