@@ -42,6 +42,7 @@ body {
 
 .hero {
   margin-bottom: 28px;
+  position: relative;
 }
 
 .brand {
@@ -81,6 +82,41 @@ h2 {
   margin: 0 0 12px;
 }
 
+.hint.block {
+  display: grid;
+  row-gap: 4px;
+  margin-bottom: 14px;
+}
+
+.hint .em {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.examples {
+  display: grid;
+  row-gap: 8px;
+  margin-bottom: 12px;
+}
+
+.examples-title {
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sample-btn {
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.sample-btn:hover {
+  border-color: rgba(210,177,106,0.45);
+}
+
 textarea {
   width: 100%;
   border-radius: 10px;
@@ -117,6 +153,12 @@ button.ghost {
   background: transparent;
   color: var(--text);
   border: 1px solid rgba(255,255,255,0.18);
+}
+
+.home-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 button:disabled {
