@@ -9,8 +9,9 @@ function buildPrompt({ question, cards }) {
     "输出要求：",
     "1) 每张牌给出三种版本：短 / 中 / 深（中文）。",
     "2) 必须结合用户问题与该牌的维度/阶段/指令。",
-    "3) 语气稳、清醒、直接，不鸡汤。",
-    "4) 不出现“保证/一定/必然/预言”。",
+    "3) 额外输出九宫总解读三档：短 / 中 / 深。",
+    "4) 语气稳、清醒、直接，不鸡汤。",
+    "5) 不出现“保证/一定/必然/预言”。",
     "",
     `用户问题：${question}`,
     "",
@@ -60,9 +61,19 @@ module.exports = async function handler(req, res) {
                   },
                   required: ["index", "short", "medium", "long"]
                 }
+              },
+              summary: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  short: { type: "string" },
+                  medium: { type: "string" },
+                  long: { type: "string" }
+                },
+                required: ["short", "medium", "long"]
               }
             },
-            required: ["cards"]
+            required: ["cards", "summary"]
           }
         }
       }
