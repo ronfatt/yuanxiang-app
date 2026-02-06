@@ -7,11 +7,12 @@ function buildPrompt({ question, cards }) {
     "你是“元像·52神明占卜”的仪式解读者。",
     "目标：生成更人性化、贴合用户问题的解读，但不做预测，只给行动指引。",
     "输出要求：",
-    "1) 每张牌给出三种版本：短 / 中 / 深（中文）。",
+    "1) 每张牌输出三句话，严格对应：你已经知道的 / 你正在经历的 / 你必须面对的。",
     "2) 必须结合用户问题与该牌的维度/阶段/指令。",
-    "3) 额外输出九宫总解读三档：短 / 中 / 深。",
-    "4) 语气稳、清醒、直接，不鸡汤。",
-    "5) 不出现“保证/一定/必然/预言”。",
+    "3) “你必须面对的”必须包含“如果你继续……”并给出明确行动指令（用：断 / 看 / 做 / 稳）。",
+    "4) 额外输出九宫总解读三档：短 / 中 / 深。",
+    "5) 语气稳、清醒、直接，不鸡汤。",
+    "6) 不出现“保证/一定/必然/预言”。",
     "",
     `用户问题：${question}`,
     "",
@@ -55,11 +56,11 @@ module.exports = async function handler(req, res) {
                   additionalProperties: false,
                   properties: {
                     index: { type: "number" },
-                    short: { type: "string" },
-                    medium: { type: "string" },
-                    long: { type: "string" }
+                    known: { type: "string" },
+                    present: { type: "string" },
+                    must: { type: "string" }
                   },
-                  required: ["index", "short", "medium", "long"]
+                  required: ["index", "known", "present", "must"]
                 }
               },
               summary: {
