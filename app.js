@@ -277,6 +277,7 @@ let currentCrossTriggered = false;
 let aiReadings = [];
 let aiRequestInFlight = false;
 let aiRequested = false;
+let aiSummary = null;
 
 const questionEl = document.getElementById("question");
 const questionError = document.getElementById("question-error");
@@ -297,6 +298,7 @@ const layerNext = document.getElementById("layer-next");
 const layerError = document.getElementById("layer-error");
 const nineGrid = document.getElementById("nine-grid");
 const finalDirective = document.getElementById("final-directive");
+const nineSummary = document.getElementById("nine-summary");
 
 const yesNoPatterns = ["吗", "是不是", "是否", "要不要", "会不会", "能不能", "可不可以", "行不行", "好不好", "对不对"];
 const predictPatterns = ["会成功", "会失败", "会不会成功", "未来", "结果", "结局", "能不能成"];
@@ -494,6 +496,7 @@ function renderLayer() {
 
   attachFlipHandlers(layerCards);
   attachDetailsHandlers(layerCards);
+  if (aiReadings.length) hydrateAIBlocks();
 
   if (currentLayer === 0) {
     layerNext.textContent = "继续深入";
@@ -506,14 +509,13 @@ function renderLayer() {
 
 function renderGrid() {
   nineGrid.innerHTML = "";
+  nineSummary.innerHTML = "";
   drawn.forEach((card, idx) => {
     const meta = suitMeta[card.suit];
     const suitClass = `suit-${card.suit}`;
     const div = document.createElement("div");
     const axis = [1, 4, 7].includes(idx);
     div.className = axis ? "card axis reveal small" : "card reveal small";
-    const interp = buildInterpretation(card);
-    const ctx = buildContext(card, currentTopics, currentCrossTriggered);
     const art = cardFaceSvg(card);
     div.innerHTML = `
       <div class="card-holder draw" style="--delay:${idx * 60}ms">
@@ -526,48 +528,24 @@ function renderGrid() {
           </div>
         </div>
       </div>
-      <div class="card-body">
-        <details class="more">
-          <summary>展开解读</summary>
-          <div class="section">
-            <div class="section-title">当前定位</div>
-            <div class="section-body">
-              <div class="pos">${Math.floor(idx / 3) + 1}-${(idx % 3) + 1}</div>
-              <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
-              <div class="kv"><div class="k">关联</div><div class="v">${ctx}</div></div>
-              <div class="kv"><div class="k">频率</div><div class="v">${interp.frequency.replace("频率：", "")}</div></div>
-              <div class="kv"><div class="k">指令</div><div class="v">${buildDirectiveLine(card).replace("指令：", "")}</div></div>
-            </div>
-          </div>
-
-          <div class="section ai-block" data-index="${idx}">
-            <div class="section-title">AI 解读（短 / 中 / 深）</div>
-            <div class="section-body">
-              <div class="ai-text">点击展开后生成</div>
-            </div>
-          </div>
-
-          <div class="section">
-            <div class="section-title">系统深层</div>
-            <div class="section-body">
-              <div class="meta">${meta.cn}｜${card.stage}</div>
-              <div class="summary">${buildSummary(card)}</div>
-              <div class="summary">${interp.energy}</div>
-              <div class="summary">${interp.destiny}</div>
-            </div>
-          </div>
-        </details>
+      <div class="card-body mini">
+        <div class="pos">${Math.floor(idx / 3) + 1}-${(idx % 3) + 1}</div>
+        <div class="name">${meta.symbol} ${card.rank} · ${card.deity}</div>
       </div>
     `;
     nineGrid.appendChild(div);
   });
 
   attachFlipHandlers(nineGrid);
-  attachDetailsHandlers(nineGrid);
 
   const last = drawn[8];
   const directive = directiveCn[last.directive];
   finalDirective.textContent = `最终行动指令：${directive}（取自 3-3）`;
+
+  renderAISummary();
+  if (!aiRequested) {
+    requestAIReadings(questionEl.value);
+  }
 }
 
 function attachFlipHandlers(container) {
@@ -584,7 +562,6 @@ function attachDetailsHandlers(container) {
   details.forEach((d) => {
     d.addEventListener("toggle", () => {
       if (d.open && !aiRequested) {
-        aiRequested = true;
         requestAIReadings(questionEl.value);
       }
     });
@@ -600,6 +577,7 @@ function getPositionLabel(index) {
 async function requestAIReadings(question) {
   if (aiRequestInFlight) return;
   aiRequestInFlight = true;
+  aiRequested = true;
   try {
     document.querySelectorAll(".ai-text").forEach((el) => {
       el.textContent = "生成中...";
@@ -626,12 +604,17 @@ async function requestAIReadings(question) {
     if (!res.ok) throw new Error("AI 生成失败");
     const data = await res.json();
     aiReadings = data.cards || [];
+    aiSummary = data.summary || null;
     hydrateAIBlocks();
+    renderAISummary();
   } catch (e) {
     document.querySelectorAll(".ai-text").forEach((el) => {
       el.textContent = "AI 生成失败，可稍后再试。";
       el.classList.remove("ai-loading");
     });
+    if (nineSummary) {
+      nineSummary.innerHTML = `<div class="section"><div class="section-title">九宫总解读（AI）</div><div class="section-body"><div class="ai-text">AI 生成失败，可稍后再试。</div></div></div>`;
+    }
   } finally {
     aiRequestInFlight = false;
   }
@@ -650,6 +633,29 @@ function hydrateAIBlocks() {
       <div><strong>深：</strong>${item.long}</div>
     `;
   });
+}
+
+function renderAISummary() {
+  if (!nineSummary) return;
+  if (!aiSummary) {
+    nineSummary.innerHTML = `
+      <div class="section">
+        <div class="section-title">九宫总解读（AI）</div>
+        <div class="section-body"><div class="ai-text">${aiRequested ? "生成中..." : "进入九宫后生成"}</div></div>
+      </div>
+    `;
+    return;
+  }
+  nineSummary.innerHTML = `
+    <div class="section">
+      <div class="section-title">九宫总解读（AI）</div>
+      <div class="section-body">
+        <div><strong>短：</strong>${aiSummary.short}</div>
+        <div><strong>中：</strong>${aiSummary.medium}</div>
+        <div><strong>深：</strong>${aiSummary.long}</div>
+      </div>
+    </div>
+  `;
 }
 
 validateBtn.addEventListener("click", () => {
@@ -672,6 +678,7 @@ shuffleDone.addEventListener("click", () => {
   currentLayer = 0;
   aiReadings = [];
   aiRequested = false;
+  aiSummary = null;
   shuffleArea.classList.remove("active");
   stepShuffle.classList.add("hidden");
   stepLayer.classList.remove("hidden");
